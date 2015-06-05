@@ -24,6 +24,11 @@ var App = React.createClass({
     return (<main>
       <div className="left-fixed">
         <RevealData name="App" props={this.props} state={this.state} />
+        <form>
+          <p><label>Name</label> <input valueLink={this.linkState('name')} /></p>
+          <p><label>Bio</label> <textarea valueLink={this.linkState('bio')} /></p>
+          <p><label>Age</label> <input type="number" valueLink={this.linkState('age')} /></p>
+        </form>
       </div>
       <div className="right">
         <article>
@@ -37,31 +42,15 @@ var App = React.createClass({
         <article>
           <h2>Two way bindings in parent ⇔ child relationships</h2>
 
-          <div className="flexy">
-            <div>
-              <p>Part of <code>App</code> component:</p>
-              <p><input valueLink={this.linkState('name')} /></p>
-            </div>
-            <div>
-              <p>Part of <code>LiveEditor</code> component:</p>
-              <LiveEditor />
-            </div>
-          </div>
+          <LiveEditor />
+
         </article>
 
         <article>
           <h2>Two way bindings in parent ⇔ child relationships where data is not synchronized</h2>
 
-          <div className="flexy">
-            <div>
-              <p>Part of <code>App</code> component:</p>
-              <p><textarea valueLink={this.linkState('bio')} /></p>
-            </div>
-            <div>
-              <p>Part of <code>Editor</code> component:</p>
-              <p><Editor {...this.state} setParentState={this.setParentState} /></p>
-            </div>
-          </div>
+          <Editor {...this.state} setParentState={this.setParentState} />
+
         </article>
 
       </div>

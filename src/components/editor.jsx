@@ -25,7 +25,8 @@ var Editor = React.createClass({
   render: function () {
     return (<div>
       <textarea value={this.state.bio} onChange={this.onChange} />
-      <button onClick={this.save}>Save</button>
+      <p><button onClick={this.save}>Save</button></p>
+
       <RevealData name="Editor" props={this.props} state={this.state} />
     </div>);
   }
