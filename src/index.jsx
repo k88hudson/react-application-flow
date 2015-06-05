@@ -7,6 +7,8 @@ var RevealData = require('./components/reveal-data.jsx');
 var ContactCard = require('./components/contact-card.jsx');
 var LiveEditor = require('./components/live-editor.jsx');
 var Editor = require('./components/editor.jsx');
+var Loading = require('./components/loading.jsx');
+var FakeAsync = require('./components/fake-async.jsx');
 
 var App = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -44,6 +46,20 @@ var App = React.createClass({
 
           <LiveEditor />
 
+        </article>
+
+        <article>
+          <h2>Sibling ⇔ Sibling relationships</h2>
+
+          <div className="flexy">
+            <Loading />
+            <FakeAsync />
+          </div>
+
+        </article>
+
+        <article>
+          <h2>Child to great grandparent</h2>
         </article>
 
         <article>

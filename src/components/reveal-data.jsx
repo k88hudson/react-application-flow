@@ -4,6 +4,9 @@ var RevealData = React.createClass({
     if (typeof val === 'function') {
       val = '[function]'
     }
+    if (typeof val === 'boolean') {
+      val = val ? 'true' : 'false';
+    }
     return val;
   },
   renderList: function (obj) {
