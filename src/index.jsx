@@ -16,7 +16,8 @@ var App = React.createClass({
     return {
       name: 'Jin',
       bio: 'I am a person and I do stuff',
-      age: 30
+      age: 30,
+      loading: false
     };
   },
   setParentState: function (state) {
@@ -52,8 +53,8 @@ var App = React.createClass({
           <h2>Sibling ⇔ Sibling relationships</h2>
 
           <div className="flexy">
-            <Loading />
-            <FakeAsync />
+            <Loading loading={this.state.loading} />
+            <FakeAsync loading={this.state.loading} setParentState={this.setParentState} />
           </div>
 
         </article>

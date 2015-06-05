@@ -8,15 +8,15 @@ var FakeAsync = React.createClass({
     };
   },
   update: function () {
-    this.setState({loading: true});
+    this.props.setParentState({loading: true});
     setTimeout(() => {
-      this.setState({loading: false});
+      this.props.setParentState({loading: false});
     }, 4000);
   },
   render: function () {
     return (<div>
 
-      <button onClick={this.update}>{this.state.loading ? 'Loading...' : 'Update some fake data'}</button>
+      <button onClick={this.update}>{this.props.loading ? 'Loading...' : 'Update some fake data'}</button>
 
       <RevealData name="FakeAsync" props={this.props} state={this.state} />
 
