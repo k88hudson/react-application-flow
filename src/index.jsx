@@ -44,7 +44,7 @@ var App = React.createClass({
         <article>
           <h2>Two way bindings in parent ⇔ child relationships</h2>
 
-          <LiveEditor />
+          <LiveEditor valueLink={this.linkState('name')} />
 
         </article>
 

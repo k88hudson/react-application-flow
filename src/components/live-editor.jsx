@@ -6,7 +6,7 @@ var LiveEditor = React.createClass({
   render: function () {
     return (<div>
 
-      <label>Name</label> <input onChange={this.onChange} />
+      <label>Name</label> <input valueLink={this.props.valueLink} />
 
       <RevealData name="LiveEditor" props={this.props} state={this.state} />
 
