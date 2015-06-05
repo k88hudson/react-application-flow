@@ -37,7 +37,7 @@ var App = React.createClass({
           <h2>One way bindings in parent to child relationships</h2>
           <p><code>ContactCard</code> should render name, bio, and age from <code>App</code></p>
 
-          <ContactCard />
+          <ContactCard {...this.state} />
 
         </article>
 
