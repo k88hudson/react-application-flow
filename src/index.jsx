@@ -1,78 +1,41 @@
 var React = require('react/addons');
 
-// Helper stuff
-var RevealData = require('./components/reveal-data.jsx');
-
-// Demo stuff
-var ContactCard = require('./components/contact-card.jsx');
-var LiveEditor = require('./components/live-editor.jsx');
-var Editor = require('./components/editor.jsx');
-var Loading = require('./components/loading.jsx');
-var FakeAsync = require('./components/fake-async.jsx');
-
-var App = React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
-  getInitialState: function () {
-    return {
-      name: 'Jin',
-      bio: 'I am a person and I do stuff',
-      age: 30,
-      loading: false
-    };
-  },
-  setParentState: function (state) {
-    this.setState(state);
-  },
+var Page = React.createClass({
   render: function () {
-    return (<main>
-      <div className="left-fixed">
-        <RevealData name="App" props={this.props} state={this.state} />
-        <form>
-          <p><label>Name</label> <input valueLink={this.linkState('name')} /></p>
-          <p><label>Bio</label> <textarea valueLink={this.linkState('bio')} /></p>
-          <p><label>Age</label> <input type="number" valueLink={this.linkState('age')} /></p>
-        </form>
-      </div>
-      <div className="right">
-        <article>
-          <h2>One way bindings in parent to child relationships</h2>
-          <p><code>ContactCard</code> should render name, bio, and age from <code>App</code></p>
-
-          <ContactCard {...this.state} />
-
-        </article>
-
-        <article>
-          <h2>Two way bindings in parent ⇔ child relationships</h2>
-
-          <LiveEditor valueLink={this.linkState('name')} />
-
-        </article>
-
-        <article>
-          <h2>Sibling ⇔ Sibling relationships</h2>
-
-          <div className="flexy">
-            <Loading loading={this.state.loading} />
-            <FakeAsync loading={this.state.loading} setParentState={this.setParentState} />
-          </div>
-
-        </article>
-
-        <article>
-          <h2>Child to great grandparent</h2>
-        </article>
-
-        <article>
-          <h2>Two way bindings in parent ⇔ child relationships where data is not synchronized</h2>
-
-          <Editor {...this.state} setParentState={this.setParentState} />
-
-        </article>
-
-      </div>
-    </main>);
+    return (<div hidden={!this.props.show}>
+      {this.props.children}
+    </div>);
   }
 });
 
-React.render(<App />, document.getElementById('app'));
+var Main = React.createClass({
+  getInitialState: function () {
+    return {
+      activePage: 1
+    };
+  },
+  goNext: function () {
+    this.setState({
+      activePage: this.state.activePage + 1
+    });
+  },
+  goBack: function () {
+    this.setState({
+      activePage: this.state.activePage - 1
+    });
+  },
+  render: function () {
+    return (<div>
+      <Page id="1" show={this.state.activePage === 1} >
+        <h1>I am page one</h1>
+        <button onClick={this.goNext}>Go next</button>
+      </Page>
+      <Page id="2" show={this.state.activePage === 2}>
+        <h1>I am page 2</h1>
+        <button onClick={this.goBack}>Go back</button>
+      </Page>
+    </div>);
+  }
+});
+
+React.render(<Main />, document.getElementById('app'));
