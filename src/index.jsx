@@ -1,5 +1,4 @@
 var React = require('react/addons');
-var EMAIL_REGEX = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
 
 var Page = React.createClass({
   render: function () {
@@ -13,99 +12,107 @@ var Main = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
   getInitialState: function () {
     return {
-      activePage: 1,
-      errors: false
+      activePage: 0,
+      submitAttempt: false,
+      validationState: []
     };
   },
 
-  goNext: function () {
-    this.setState({
-      activePage: this.state.activePage + 1
-    });
-  },
-
-  goBack: function () {
-    this.setState({
-
-  validations: {
-    required: function (value) {
-      if (!value) return 'is required';
-    },
-    email: function (value) {
-      if (!value || !value.match(EMAIL_REGEX)) {
-        return 'must be an email';
-      }
+  navigateTo: function (page) {
+    if (!this.isCurrentPageValid()) {
+      this.setState({
+        submitAttempt: true
+      });
+    } else {
+      this.setState({
+        submitAttempt: false,
+        activePage: page
+      });
     }
   },
 
-  validate: function (onSuccess) {
+  goNext: function () {
+    this.navigateTo(this.state.activePage + 1);
+  },
 
-    var errors = [];
+  goBack: function () {
+    this.navigateTo(this.state.activePage - 1);
+  },
 
-    var refs = Object.keys(this.refs)
-      // Filter refs to only include those starting with "field-"
-      .filter((key) => key.match(/^field-/))
-      // Store a reference to the actual ref, not the key name
-      .map((key) => this.refs[key]);
+  onValidate: function (page, field, initialState) {
+    var validationState = this.state.validationState;
+    if (!validationState[page]) validationState[page] = {};
+    if (typeof validationState[page][field] === 'undefined') {
+      validationState[page][field] = initialState || false;
+    }
 
-    if (!refs.length) return;
+    return (isValid) => {
+      validationState[page][field] = isValid;
+      this.setState({validationState});
+    }
+  },
 
-    refs.forEach((ref) => {
+  isCurrentPageValid: function () {
+    var isValid = true;
+    var validations = this.state.validationState[this.state.activePage];
+    if (!validations) return true;
 
-      // Get "validate" property
-      var validations = ref.props.validate && ref.props.validate.split(' ');
-      if (!validations) return;
-
-      // Get the text to validate
-      var validationText;
-      if (ref.props.valueLink) validationText = ref.props.valueLink.value;
-      else validationText = ref.getDOMNode().value;
-
-      validations.forEach((validationType) => {
-        if (!this.validations[validationType]) {
-          console.error('You tried to use a validation that is not defined: ' + validationType);
-          return;
-        }
-
-        // Run validation, if it fails, add an error
-        var validationError = this.validations[validationType](validationText);
-        if (validationError) {
-          errors.push(ref.props.name + ' ' + validationError);
-        }
-
-      });
+    Object.keys(validations).forEach((key) => {
+      if (!validations[key]) isValid = false;
     });
 
-    this.setState({
-      errors: errors.length ? errors : false
-    });
-
-    // Return true if there were no errors, false if there were
-    return !errors.length;
-
+    return isValid;
   },
 
   render: function () {
+    console.log(this.state.validationState);
     return (<div>
-      <Page id="1" show={this.state.activePage === 1} >
+      <Page id="0" show={this.state.activePage === 0} >
         <h1>I am page one</h1>
-        <div>
-          <label>Name</label>
-          <input ref="field-name" name="name" validate="required" valueLink={this.linkState('name')} />
-        </div>
-        <div>
-          <label>Email</label>
-          <input ref="field-email" name="email" validate="required email" valueLink={this.linkState('email')} />
-        </div>
-        <div className="errors" hidden={!this.state.errors}>
-          {this.state.errors && this.state.errors.map(error => <p>{error}</p>)}
-        </div>
-        <button onClick={() => this.validate() && this.goNext()}>Go next</button>
+        <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(0, 'personalInfo')} />
+        <button onClick={this.goNext}>Go next</button>
       </Page>
-      <Page id="2" show={this.state.activePage === 2}>
+      <Page id="2" show={this.state.activePage === 1}>
         <h1>I am page 2</h1>
+        <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(1, 'personalInfo')} />
         <button onClick={this.goBack}>Go back</button>
       </Page>
+    </div>);
+  }
+});
+
+var PersonalInfo = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
+  getInitialState: function () {
+    return {
+      name: '',
+      email: ''
+    };
+  },
+  componentDidUpdate: function (prevProps, prevState) {
+    if (prevState !== this.state) {
+      this.props.onValidate(this.isValid());
+    }
+  },
+  isValid: function () {
+    return !!(this.state.name && this.state.email);
+  },
+  render: function () {
+
+    var showErrors = this.props.showErrors && !this.isValid();
+
+    return (<div>
+      <div>
+        <label>Name</label>
+        <input name="name" valueLink={this.linkState('name')} />
+      </div>
+      <div>
+        <label>Email</label>
+        <input name="email" valueLink={this.linkState('email')} />
+      </div>
+      <p className="errors" hidden={!showErrors}>
+        There were some errors!
+      </p>
     </div>);
   }
 });
