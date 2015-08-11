@@ -1,84 +1,5 @@
 var React = require('react/addons');
-
-var Page = React.createClass({
-  render: function () {
-    return (<div hidden={!this.props.show}>
-      {this.props.children}
-    </div>);
-  }
-});
-
-var Main = React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
-  getInitialState: function () {
-    return {
-      activePage: 0,
-      submitAttempt: false,
-      pageValidations: []
-    };
-  },
-
-  navigateTo: function (page) {
-    if (!this.isCurrentPageValid()) {
-      this.setState({
-        submitAttempt: true
-      });
-    } else {
-      this.setState({
-        submitAttempt: false,
-        activePage: page
-      });
-    }
-  },
-
-  goNext: function () {
-    this.navigateTo(this.state.activePage + 1);
-  },
-
-  goBack: function () {
-    this.navigateTo(this.state.activePage - 1);
-  },
-
-  onValidate: function (page, field, initialState) {
-    var pageValidations = this.state.pageValidations;
-    if (!pageValidations[page]) pageValidations[page] = {};
-    if (typeof pageValidations[page][field] === 'undefined') {
-      pageValidations[page][field] = initialState || false;
-    }
-
-    return (isValid) => {
-      pageValidations[page][field] = isValid;
-      this.setState({pageValidations});
-    }
-  },
-
-  isCurrentPageValid: function () {
-    var isValid = true;
-    var validations = this.state.pageValidations[this.state.activePage];
-    if (!validations) return true;
-
-    Object.keys(validations).forEach((key) => {
-      if (!validations[key]) isValid = false;
-    });
-
-    return isValid;
-  },
-
-  render: function () {
-    return (<div>
-      <Page id="0" show={this.state.activePage === 0} >
-        <h1>I am page one</h1>
-        <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(0, 'personalInfo')} />
-        <button onClick={this.goNext}>Go next</button>
-      </Page>
-      <Page id="2" show={this.state.activePage === 1}>
-        <h1>I am page 2</h1>
-        <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(1, 'personalInfo')} />
-        <button onClick={this.goBack}>Go back</button>
-      </Page>
-    </div>);
-  }
-});
+var createForm = require('./form.jsx');
 
 var PersonalInfo = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -116,4 +37,17 @@ var PersonalInfo = React.createClass({
   }
 });
 
-React.render(<Main />, document.getElementById('app'));
+React.render(createForm(function() {
+  return [
+    <div>
+      <h1>I am page one</h1>
+      <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(0, 'personalInfo')} />
+      <button onClick={this.goNext}>Go next</button>
+    </div>,
+    <div>
+      <h1>I am page 2</h1>
+      <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(1, 'personalInfo')} />
+      <button onClick={this.goBack}>Go back</button>
+    </div>
+  ];
+}), document.getElementById('app'));
