@@ -67,7 +67,7 @@ module.exports = function createForm(render) {
     },
 
     render: function () {
-      var innerPages = render.bind(this)();
+      var innerPages = render.bind(this)().props.children;
       return (<div>
         {innerPages.map((page, i) => <Page id={i} key={i} show={this.state.activePage === i}>{page}</Page>)}
       </div>);

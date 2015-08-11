@@ -38,16 +38,16 @@ var PersonalInfo = React.createClass({
 });
 
 React.render(createForm(function() {
-  return [
+  return (<div>
     <div>
       <h1>I am page one</h1>
       <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(0, 'personalInfo')} />
       <button onClick={this.goNext}>Go next</button>
-    </div>,
+    </div>
     <div>
       <h1>I am page 2</h1>
       <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(1, 'personalInfo')} />
       <button onClick={this.goBack}>Go back</button>
     </div>
-  ];
+  </div>);
 }), document.getElementById('app'));
