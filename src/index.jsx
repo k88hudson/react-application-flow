@@ -65,7 +65,6 @@ var Main = React.createClass({
   },
 
   render: function () {
-    console.log(this.state.validationState);
     return (<div>
       <Page id="0" show={this.state.activePage === 0} >
         <h1>I am page one</h1>
