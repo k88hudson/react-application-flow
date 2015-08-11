@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var createForm = require('./form.jsx');
+var {CreateForm, FormMixin} = require('./form.jsx');
 
 var PersonalInfo = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -8,11 +8,6 @@ var PersonalInfo = React.createClass({
       name: '',
       email: ''
     };
-  },
-  componentDidUpdate: function (prevProps, prevState) {
-    if (prevState !== this.state) {
-      this.props.onValidate(this.isValid());
-    }
   },
   isValid: function () {
     return !!(this.state.name && this.state.email);
@@ -31,23 +26,79 @@ var PersonalInfo = React.createClass({
         <input name="email" valueLink={this.linkState('email')} />
       </div>
       <p className="errors" hidden={!showErrors}>
-        There were some errors!
+        Name and email are required
       </p>
     </div>);
   }
 });
 
-React.render(createForm(function() {
-  return (<div>
-    <div>
-      <h1>I am page one</h1>
-      <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(0, 'personalInfo')} />
-      <button onClick={this.goNext}>Go next</button>
-    </div>
-    <div>
-      <h1>I am page 2</h1>
-      <PersonalInfo showErrors={this.state.submitAttempt} onValidate={this.onValidate(1, 'personalInfo')} />
-      <button onClick={this.goBack}>Go back</button>
-    </div>
-  </div>);
-}), document.getElementById('app'));
+var CreditCard = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
+  getInitialState: function () {
+    return {
+      cardNumber: ''
+    };
+  },
+  isValid: function () {
+    return !!(+this.state.cardNumber);
+  },
+  render: function () {
+
+    var showErrors = this.props.showErrors && !this.isValid();
+
+    return (<div>
+      <label>Enter your credit card number:</label>
+      <input valueLink={this.linkState('cardNumber')} />
+      <p className="errors" hidden={!showErrors}>
+        Credit card must be a number
+      </p>
+    </div>);
+  }
+});
+
+var Page1 = React.createClass({
+  mixins: [FormMixin],
+  getInitialState: function () {
+    return {
+      didSubmit: false
+    };
+  },
+  onClick: function () {
+    var isValid = true;
+    this.setState({didSubmit: true});
+    Object.keys(this.refs).forEach(key => {
+      if (!this.refs[key].isValid()) isValid = false;
+    });
+    if (!isValid) return;
+    this.goNext();
+  },
+  render: function () {
+    return (<div>
+      <h1>Hi this is page {this.props.index + 1}</h1>
+      <PersonalInfo showErrors={this.state.didSubmit} ref="personalInfo" />
+      <CreditCard showErrors={this.state.didSubmit} ref="creditCard" />
+      <button onClick={this.onClick}>Next</button>
+    </div>);
+  }
+});
+
+var Page2 = React.createClass({
+  mixins: [FormMixin],
+  render: function () {
+    return (<div>
+      Foo bar
+      <button onClick={this.goBack}>Back</button>
+    </div>);
+  }
+});
+
+var pages = [
+  Page1,
+  Page2
+];
+
+CreateForm(pages, function (Form) {
+  React.render(<Form />, document.getElementById('app'));
+});
+
+

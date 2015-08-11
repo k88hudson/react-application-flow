@@ -1,6 +1,6 @@
 var React = require('react/addons');
 
-var Page = React.createClass({
+var PageContainer = React.createClass({
   render: function () {
     return (<div hidden={!this.props.show}>
       {this.props.children}
@@ -8,70 +8,79 @@ var Page = React.createClass({
   }
 });
 
-module.exports = function createForm(render) {
-  var Form = React.createClass({
-    mixins: [React.addons.LinkedStateMixin],
+var contextTypes = {
+  navigateTo: React.PropTypes.func,
+  goNext: React.PropTypes.func,
+  goBack: React.PropTypes.func
+};
 
-    getInitialState: function () {
-      return {
-        activePage: 0,
-        submitAttempt: false,
-        pageValidations: []
-      };
-    },
+module.exports = {
+  CreateForm: function CreateForm(pages, cb) {
 
-    navigateTo: function (page) {
-      if (!this.isCurrentPageValid()) {
+    cb(React.createClass({
+
+      mixins: [React.addons.LinkedStateMixin],
+
+      childContextTypes: contextTypes,
+
+      getChildContext: function() {
+        return {
+          navigateTo: this.navigateTo,
+          goNext: this.goNext,
+          goBack: this.goBack
+        }
+      },
+
+      getInitialState: function () {
+        return {
+          activePage: 0
+        };
+      },
+
+      navigateTo: function (page) {
         this.setState({
-          submitAttempt: true
-        });
-      } else {
-        this.setState({
-          submitAttempt: false,
           activePage: page
         });
+      },
+
+      goNext: function () {
+        this.navigateTo(this.state.activePage + 1);
+      },
+
+      goBack: function () {
+        this.navigateTo(this.state.activePage - 1);
+      },
+
+      render: function () {
+        return (<div>
+          {pages.map((InnerComponent, i) => {
+            return (
+              <PageContainer id={i} key={i} show={this.state.activePage === i}>
+                <InnerComponent
+                  ref={'page-' + i}
+                  index={i} />
+              </PageContainer>
+            );
+          })}
+        </div>);
       }
+    }));
+  },
+
+  FormMixin: {
+
+    contextTypes: contextTypes,
+
+    navigateTo: function () {
+      this.context.navigateTo();
     },
 
     goNext: function () {
-      this.navigateTo(this.state.activePage + 1);
+      this.context.goNext();
     },
 
     goBack: function () {
-      this.navigateTo(this.state.activePage - 1);
-    },
-
-    onValidate: function (page, field, initialState) {
-      var pageValidations = this.state.pageValidations;
-      if (!pageValidations[page]) pageValidations[page] = {};
-      if (typeof pageValidations[page][field] === 'undefined') {
-        pageValidations[page][field] = initialState || false;
-      }
-
-      return (isValid) => {
-        pageValidations[page][field] = isValid;
-        this.setState({pageValidations});
-      }
-    },
-
-    isCurrentPageValid: function () {
-      var isValid = true;
-      var validations = this.state.pageValidations[this.state.activePage];
-      if (!validations) return true;
-
-      Object.keys(validations).forEach((key) => {
-        if (!validations[key]) isValid = false;
-      });
-
-      return isValid;
-    },
-
-    render: function () {
-      var innerPages = render.bind(this)().props.children;
-      return (<div>
-        {innerPages.map((page, i) => <Page id={i} key={i} show={this.state.activePage === i}>{page}</Page>)}
-      </div>);
+      this.context.goBack();
     }
-  });
-  return <Form />;
-}
+  }
+};
