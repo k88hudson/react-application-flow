@@ -36,25 +36,6 @@ createForm(function() {
 })
 ```
 
-## Navigation
-
-To navigate back or forwards, use methods `this.goBack` and `this.goNext`.
-
-```js
-createForm(function() {
-  return <div>
-    <div>
-      This is the first page
-      <button onClick={this.goNext}>Next</button>
-    </div>
-    <div>
-      This is page two
-      <button onClick={this.goBack}>Back</button>
-    </div>
-  </div>
-})
-```
-
 ## Validation
 
 To update the global navigation state inside child components, use `this.onValidate` to generate a callback.
