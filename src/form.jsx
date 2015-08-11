@@ -81,6 +81,18 @@ module.exports = {
 
     goBack: function () {
       this.context.goBack();
+    },
+
+    validateFields: function () {
+      var isValid;
+      var refs = Object.keys(this.refs)
+        .filter(key => key.match(/^field-/))
+        .map(key => this.refs[key])
+        .forEach(ref => {
+          // todo handle case when no isValid function
+          if (!ref.isValid()) isValid = false;
+        });
+      return isValid;
     }
   }
 };

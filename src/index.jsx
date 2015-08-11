@@ -2,16 +2,20 @@ var React = require('react/addons');
 var {CreateForm, FormMixin} = require('./form.jsx');
 
 var PersonalInfo = React.createClass({
+
   mixins: [React.addons.LinkedStateMixin],
+
   getInitialState: function () {
     return {
       name: '',
       email: ''
     };
   },
+
   isValid: function () {
     return !!(this.state.name && this.state.email);
   },
+
   render: function () {
 
     var showErrors = this.props.showErrors && !this.isValid();
@@ -57,26 +61,26 @@ var CreditCard = React.createClass({
 });
 
 var Page1 = React.createClass({
+
   mixins: [FormMixin],
+
   getInitialState: function () {
     return {
       didSubmit: false
     };
   },
+
   onClick: function () {
-    var isValid = true;
     this.setState({didSubmit: true});
-    Object.keys(this.refs).forEach(key => {
-      if (!this.refs[key].isValid()) isValid = false;
-    });
-    if (!isValid) return;
+    if (!this.validateFields()) return;
     this.goNext();
   },
+
   render: function () {
     return (<div>
       <h1>Hi this is page {this.props.index + 1}</h1>
-      <PersonalInfo showErrors={this.state.didSubmit} ref="personalInfo" />
-      <CreditCard showErrors={this.state.didSubmit} ref="creditCard" />
+      <PersonalInfo showErrors={this.state.didSubmit} ref="field-personalInfo" />
+      <CreditCard showErrors={this.state.didSubmit} ref="field-creditCard" />
       <button onClick={this.onClick}>Next</button>
     </div>);
   }
