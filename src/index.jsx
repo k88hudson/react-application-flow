@@ -14,7 +14,7 @@ var Main = React.createClass({
     return {
       activePage: 0,
       submitAttempt: false,
-      validationState: []
+      pageValidations: []
     };
   },
 
@@ -40,21 +40,21 @@ var Main = React.createClass({
   },
 
   onValidate: function (page, field, initialState) {
-    var validationState = this.state.validationState;
-    if (!validationState[page]) validationState[page] = {};
-    if (typeof validationState[page][field] === 'undefined') {
-      validationState[page][field] = initialState || false;
+    var pageValidations = this.state.pageValidations;
+    if (!pageValidations[page]) pageValidations[page] = {};
+    if (typeof pageValidations[page][field] === 'undefined') {
+      pageValidations[page][field] = initialState || false;
     }
 
     return (isValid) => {
-      validationState[page][field] = isValid;
-      this.setState({validationState});
+      pageValidations[page][field] = isValid;
+      this.setState({pageValidations});
     }
   },
 
   isCurrentPageValid: function () {
     var isValid = true;
-    var validations = this.state.validationState[this.state.activePage];
+    var validations = this.state.pageValidations[this.state.activePage];
     if (!validations) return true;
 
     Object.keys(validations).forEach((key) => {
