@@ -4,88 +4,10 @@
 body {
   font-family: sans-serif;
   color: #333;
-  margin: 0;
-}
-
-main {
-  background: #282A36;
-  padding-left: 300px;
-  .right {
-    background: white;
-  }
-}
-
-.left-fixed {
-  width: 300px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  form {
-    padding: 0 10px;
-  }
-  label {
-    display: block;
-  }
-  textarea, input {
-    width: 100%;
-    color: white;
-    border: 1px solid fade(white, 30%);
-    background: fade(white, 5%);
-  }
-}
-
-.flexy {
-  display: flex;
-  > div {
-    width: 50%;
-  }
-}
-
-.code {
-  font-family: Monaco, monospace;
-  background: #282A36;
-  color: #FF79C6;
-  padding: 4px 6px;
-  border-radius: 3px;
-}
-
-code {
-  .code;
-}
-
-article {
+  margin: 0 auto;
+  max-width: 900px;
   padding: 20px;
-  border-bottom: 1px solid #CCC;
-  h2 {
-    margin: 0 0 1em 0;
-  }
 }
-
-.state {
-  margin: 10px 0;
-  .code;
-  color: white;
-  font-size: 14px;
-  h3 {
-    font-size: inherit;
-    margin: 0;
-    text-decoration: underline;
-    color: #50FA7B;
-  }
-  > div {
-    margin-bottom: 10px;
-  }
-  table {
-    td {
-      vertical-align: top;
-    }
-    td:first-child {
-      width: 45px;
-      color: #50FA7B;
-    }
-  }
-}
-
 
 button {
   border: none;
@@ -98,11 +20,13 @@ button {
 
 label {
   color: #999;
+  display: block;
 }
 
 input {
   font-size: inherit;
   border: 1px solid #999;
+  margin-bottom: 10px;
 }
 
 textarea {
@@ -112,9 +36,8 @@ textarea {
   border: 1px solid #999;
 }
 
-
-.contact-card {
-  border: 1px solid #CCC;
-  padding: 20px;
-  max-width: 400px;
+.errors {
+  color: red;
 }
+
+
