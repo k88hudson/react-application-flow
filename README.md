@@ -14,7 +14,7 @@ CreateForm(pages, function(Form) {
 
 ## Navigation
 
-To navigate back or forwards inside a page, include the ` use methods `this.goBack` and `this.goNext`.
+To navigate back or forwards inside a page, include the use methods `this.goBack` and `this.goNext`.
 
 ```js
 mixins: [require('form.jsx').FormMixin],
