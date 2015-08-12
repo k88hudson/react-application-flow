@@ -84,7 +84,7 @@ module.exports = {
     },
 
     validateFields: function () {
-      var isValid;
+      var isValid = true;
       var refs = Object.keys(this.refs)
         .filter(key => key.match(/^field-/))
         .map(key => this.refs[key])
